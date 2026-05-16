@@ -1,0 +1,3633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <title>Kovai Vetri Interiors | Coimbatore's Premier Commercial Interior Design</title>
+    <meta name="description" content="Coimbatore's most trusted commercial interior design firm since 2006. Offices, showrooms, hospitals, bakeries, schools - we transform every space.">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Serif+Display&family=Inter:wght@300;400;500;600&family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,600&display=swap" rel="stylesheet">
+    
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@0.383.0/dist/umd/lucide.min.js"></script>
+    
+    <style>
+        /* ===== CSS CUSTOM PROPERTIES ===== */
+        :root {
+            --dark: #0A0A0F;
+            --navy: #1A2E4A;
+            --navy-mid: #1E3A5F;
+            --copper: #B87333;
+            --copper-light: #E8C99A;
+            --copper-glow: #D4956A;
+            --white: #FFFFFF;
+            --warm-white: #F5F0E8;
+            --muted: #8A8580;
+            --section-bg: #0F1520;
+            --card-bg: #111827;
+            
+            --font-display: 'Playfair Display', serif;
+            --font-heading: 'DM Serif Display', serif;
+            --font-body: 'Inter', sans-serif;
+            --font-accent: 'Cinzel', serif;
+            --font-numbers: 'Cormorant Garamond', serif;
+            
+            --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        /* ===== RESET & BASE ===== */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+        
+        body {
+            font-family: var(--font-body);
+            background-color: var(--dark);
+            color: var(--warm-white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        @media (pointer: fine) {
+            body, button, a, input, select, textarea { cursor: none; }
+        }
+        
+        /* ===== CUSTOM CURSOR ===== */
+        .cursor-dot {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: var(--copper);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            mix-blend-mode: difference;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .cursor-ring {
+            position: fixed;
+            width: 42px;
+            height: 42px;
+            border: 1px solid var(--copper);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, background-color 0.3s, opacity 0.3s;
+            opacity: 0;
+        }
+        
+        .cursor-dot.visible, .cursor-ring.visible {
+            opacity: 1;
+        }
+        
+        .cursor-ring.hover {
+            width: 64px;
+            height: 64px;
+            background-color: rgba(184, 115, 51, 0.15);
+        }
+        
+        .cursor-ring.click {
+            animation: cursorClick 0.3s ease-out;
+        }
+        
+        @keyframes cursorClick {
+            0% { transform: translate(-50%, -50%) scaleX(1.5) scaleY(0.5); }
+            50% { transform: translate(-50%, -50%) scaleX(0.8) scaleY(1.2); }
+            100% { transform: translate(-50%, -50%) scaleX(1) scaleY(1); }
+        }
+        
+        /* ===== NOISE TEXTURE ===== */
+        .noise-overlay {
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.025;
+            pointer-events: none;
+            z-index: 9998;
+        }
+        
+        /* ===== COPPER GRADIENT TEXT ===== */
+        .copper-text {
+            background: linear-gradient(135deg, var(--copper) 0%, var(--copper-light) 50%, var(--copper) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 200% 200%;
+            animation: copperShimmer 3s ease-in-out infinite;
+        }
+        
+        @keyframes copperShimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        /* ===== PAGE LOAD CURTAIN ===== */
+        .curtain {
+            position: fixed;
+            inset: 0;
+            z-index: 10001;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .curtain-top, .curtain-bottom {
+            background: var(--dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .curtain-top {
+            flex: 1;
+            border-bottom: 1px solid var(--copper);
+        }
+        
+        .curtain-bottom {
+            flex: 1;
+            border-top: 1px solid var(--copper);
+        }
+        
+        .curtain-logo {
+            position: absolute;
+            font-family: var(--font-accent);
+            font-size: 8rem;
+            color: var(--copper);
+            opacity: 0;
+        }
+        
+        /* ===== ANNOUNCEMENT STRIP ===== */
+        .announcement-strip {
+            height: 48px;
+            background: var(--navy);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .announcement-strip::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(184, 115, 51, 0.1), transparent);
+            animation: shimmerSweep 5s ease-in-out infinite;
+        }
+        
+        @keyframes shimmerSweep {
+            0%, 90% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .announcement-left, .announcement-right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-family: var(--font-accent);
+            font-size: 0.75rem;
+            letter-spacing: 0.08em;
+            z-index: 1;
+        }
+        
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--copper);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+        
+        /* ===== NAVBAR ===== */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 1.25rem 2rem;
+            transition: var(--transition-smooth);
+        }
+        
+        .navbar.scrolled {
+            backdrop-filter: blur(24px);
+            background: rgba(10, 10, 15, 0.85);
+            border-bottom: 1px solid rgba(184, 115, 51, 0.3);
+        }
+        
+        .navbar-content {
+            max-width: 1440px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+        
+        .logo-monogram {
+            width: 48px;
+            height: 48px;
+            background: var(--copper);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-accent);
+            font-weight: 600;
+            font-size: 1.25rem;
+            color: var(--dark);
+            border-radius: 4px;
+        }
+        
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo-brand {
+            font-family: var(--font-body);
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--warm-white);
+            letter-spacing: 0.05em;
+        }
+        
+        .logo-sub {
+            font-family: var(--font-accent);
+            font-size: 0.65rem;
+            color: var(--copper);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            font-family: var(--font-body);
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--warm-white);
+            text-decoration: none;
+            transition: var(--transition-smooth);
+            position: relative;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--copper);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .nav-links a:hover {
+            color: var(--copper-light);
+        }
+        
+        .nav-cta {
+            padding: 0.75rem 1.5rem;
+            border: 1px solid var(--copper);
+            color: var(--copper);
+            background: transparent;
+            font-family: var(--font-body);
+            font-weight: 500;
+            font-size: 0.9rem;
+            border-radius: 4px;
+            cursor: none;
+            transition: var(--transition-smooth);
+        }
+        
+        .nav-cta:hover {
+            background: var(--copper);
+            color: var(--dark);
+        }
+        
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: none;
+            z-index: 1001;
+        }
+        
+        .hamburger span {
+            width: 28px;
+            height: 2px;
+            background: var(--copper);
+            transition: var(--transition-smooth);
+        }
+        
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+        
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+        
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            height: 100vh;
+            background: var(--dark);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            transition: right 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 999;
+        }
+        
+        .mobile-menu.active {
+            right: 0;
+        }
+        
+        .mobile-menu a {
+            font-family: var(--font-body);
+            font-size: 1.5rem;
+            color: var(--warm-white);
+            text-decoration: none;
+            opacity: 0;
+            transform: translateX(50px);
+        }
+        
+        .mobile-menu.active a {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        /* ===== HERO SECTION ===== */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            overflow: hidden;
+        }
+        
+        .hero-canvas {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+        
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(10, 10, 15, 0.5) 0%, rgba(10, 10, 15, 0.85) 100%);
+            z-index: 1;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 1200px;
+        }
+        
+        .hero-badge {
+            font-family: var(--font-accent);
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            color: var(--copper);
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+        }
+        
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: 7.5vw;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+        
+        .hero-title-line1 {
+            font-style: italic;
+            font-weight: 400;
+            color: var(--warm-white);
+            display: block;
+        }
+        
+        .hero-title-line2 {
+            font-style: italic;
+            font-weight: 700;
+            display: block;
+        }
+        
+        .hero-subtitle {
+            font-family: var(--font-body);
+            font-weight: 300;
+            font-size: 1.1rem;
+            color: rgba(245, 240, 232, 0.7);
+            max-width: 580px;
+            margin: 0 auto 2.5rem;
+        }
+        
+        .hero-cta-row {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 2.5rem;
+        }
+        
+        .btn-primary {
+            padding: 1rem 2rem;
+            background: var(--copper);
+            color: var(--dark);
+            font-family: var(--font-body);
+            font-weight: 500;
+            font-size: 0.95rem;
+            border: none;
+            border-radius: 4px;
+            cursor: none;
+            transition: var(--transition-smooth);
+            text-decoration: none;
+        }
+        
+        .btn-primary:hover {
+            background: var(--copper-light);
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            padding: 1rem 2rem;
+            background: transparent;
+            color: var(--copper);
+            font-family: var(--font-body);
+            font-weight: 500;
+            font-size: 0.95rem;
+            border: 1px solid var(--copper);
+            border-radius: 4px;
+            cursor: none;
+            transition: var(--transition-smooth);
+            text-decoration: none;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--copper);
+            color: var(--dark);
+            transform: translateY(-2px);
+        }
+        
+        .trust-bar {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            font-family: var(--font-body);
+            font-weight: 300;
+            font-size: 0.9rem;
+            color: var(--warm-white);
+        }
+        
+        .trust-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .trust-dot {
+            width: 4px;
+            height: 4px;
+            background: var(--copper);
+            border-radius: 50%;
+        }
+        
+        .hero-image-strip {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 3rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero-image {
+            width: 180px;
+            height: 120px;
+            object-fit: cover;
+            border: 1px solid rgba(184, 115, 51, 0.3);
+            border-radius: 8px;
+            transition: var(--transition-smooth);
+        }
+        
+        .hero-image:nth-child(odd) {
+            transform: rotate(-2deg);
+        }
+        
+        .hero-image:nth-child(even) {
+            transform: rotate(2deg);
+        }
+        
+        .hero-image:hover {
+            transform: scale(1.06) rotate(0deg);
+            border-color: var(--copper);
+            box-shadow: 0 0 30px rgba(184, 115, 51, 0.3);
+        }
+        
+        /* ===== STATS SECTION ===== */
+        .stats-section {
+            background: var(--navy);
+            padding: 4rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stats-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 2px,
+                rgba(184, 115, 51, 0.03) 2px,
+                rgba(184, 115, 51, 0.03) 4px
+            );
+            pointer-events: none;
+        }
+        
+        .stats-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 0 1rem;
+            position: relative;
+        }
+        
+        .stat-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 10%;
+            height: 80%;
+            width: 1px;
+            background: rgba(184, 115, 51, 0.3);
+        }
+        
+        .stat-number {
+            font-family: var(--font-numbers);
+            font-style: italic;
+            font-size: 4.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            font-family: var(--font-body);
+            font-weight: 300;
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
+            color: var(--warm-white);
+        }
+        
+        /* ===== PORTFOLIO SECTION ===== */
+        .portfolio-section {
+            background: var(--dark);
+            padding: 6rem 2rem;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .section-title {
+            font-family: var(--font-heading);
+            font-size: 3rem;
+            color: var(--warm-white);
+            margin-bottom: 0.75rem;
+        }
+        
+        .section-subtitle {
+            font-family: var(--font-body);
+            font-weight: 300;
+            font-style: italic;
+            color: var(--muted);
+            font-size: 1.1rem;
+        }
+        
+        .filter-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+        }
+        
+        .filter-tab {
+            padding: 0.5rem 1.25rem;
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            cursor: none;
+            transition: var(--transition-smooth);
+            position: relative;
+        }
+        
+        .filter-tab::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: var(--copper);
+            transition: width 0.3s ease;
+        }
+        
+        .filter-tab.active {
+            color: var(--warm-white);
+        }
+        
+        .filter-tab.active::after {
+            width: 80%;
+        }
+        
+        .portfolio-grid {
+            max-width: 1440px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+        
+        .portfolio-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            cursor: none;
+            border: 1px solid rgba(184, 115, 51, 0.1);
+        }
+        
+        .portfolio-card.tall {
+            aspect-ratio: 4/5;
+        }
+        
+        .portfolio-card.wide {
+            aspect-ratio: 16/9;
+            grid-column: span 2;
+        }
+        
+        .portfolio-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .portfolio-card:hover .portfolio-image {
+            transform: scale(1.06);
+        }
+        
+        .portfolio-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(10, 10, 15, 0.95) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 1.5rem;
+        }
+        
+        .portfolio-card:hover .portfolio-overlay {
+            opacity: 1;
+        }
+        
+        .portfolio-category {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            padding: 0.35rem 0.75rem;
+            background: var(--copper);
+            color: var(--dark);
+            font-family: var(--font-accent);
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            border-radius: 20px;
+            text-transform: uppercase;
+        }
+        
+        .portfolio-title {
+            font-family: var(--font-display);
+            font-style: italic;
+            font-size: 1.25rem;
+            color: var(--warm-white);
+            margin-bottom: 0.5rem;
+        }
+        
+        .portfolio-link {
+            color: var(--copper);
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        /* ===== SERVICES SECTION ===== */
+        .services-section {
+            background: var(--section-bg);
+            padding: 6rem 2rem;
+        }
+        
+        .services-grid {
+            max-width: 1440px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+        
+        .service-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(184, 115, 51, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            transform-style: preserve-3d;
+            cursor: none;
+            /* Always visible — no JS-dependent opacity trick */
+            opacity: 1;
+            transform: translateY(0);
+            transition: border-color 0.3s ease, box-shadow 0.4s ease, transform 0.35s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        .service-card:hover {
+            border-color: var(--copper);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(184, 115, 51, 0.15);
+        }
+        
+        .service-icon {
+            width: 56px;
+            height: 56px;
+            background: rgba(184, 115, 51, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: var(--copper);
+        }
+        
+        .service-name {
+            font-family: var(--font-heading);
+            font-size: 1.35rem;
+            color: var(--warm-white);
+            margin-bottom: 0.5rem;
+        }
+        
+        .service-range {
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            color: var(--copper);
+            margin-bottom: 1rem;
+        }
+        
+        .service-features {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .service-feature {
+            font-family: var(--font-body);
+            font-weight: 300;
+            font-size: 0.85rem;
+            color: var(--muted);
+            padding: 0.25rem 0.5rem;
+            background: rgba(184, 115, 51, 0.05);
+            border-radius: 4px;
+        }
+        
+        /* ===== BEFORE/AFTER SECTION ===== */
+        .before-after-section {
+            background: var(--dark);
+            padding: 6rem 2rem;
+        }
+        
+        .before-after-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 2rem;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        
+        .before-after-container::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .ba-pair {
+            min-width: 100%;
+            scroll-snap-align: center;
+        }
+        
+        .ba-slider {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
+            overflow: hidden;
+            border-radius: 12px;
+            border: 1px solid rgba(184, 115, 51, 0.2);
+        }
+        
+        .ba-before, .ba-after {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .ba-before {
+            filter: grayscale(80%) sepia(20%);
+        }
+        
+        .ba-after {
+            clip-path: inset(0 50% 0 0);
+        }
+        
+        .ba-range {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: ew-resize;
+            z-index: 10;
+        }
+        
+        .ba-divider {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 2px;
+            background: var(--copper);
+            transform: translateX(-50%);
+            pointer-events: none;
+            z-index: 5;
+        }
+        
+        .ba-handle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 48px;
+            height: 48px;
+            background: var(--copper);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark);
+            pointer-events: none;
+            z-index: 6;
+        }
+        
+        .ba-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            font-family: var(--font-accent);
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+        }
+        
+        .ba-label-before {
+            color: var(--muted);
+        }
+        
+        .ba-label-after {
+            color: var(--copper);
+        }
+        
+        /* ===== PROCESS SECTION ===== */
+        .process-section {
+            background: var(--section-bg);
+            padding: 6rem 2rem;
+        }
+        
+        .process-timeline {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            padding: 2rem 0;
+        }
+        
+        .timeline-line {
+            position: absolute;
+            top: 60px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(184, 115, 51, 0.2);
+        }
+        
+        .timeline-progress {
+            position: absolute;
+            top: 60px;
+            left: 0;
+            height: 2px;
+            background: var(--copper);
+            width: 0;
+            transition: width 0.5s ease;
+        }
+        
+        .process-steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .process-step {
+            text-align: center;
+            flex: 1;
+            padding: 0 1rem;
+        }
+        
+        .step-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--card-bg);
+            border: 2px solid rgba(184, 115, 51, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2rem;
+            color: var(--copper);
+            transition: var(--transition-smooth);
+        }
+        
+        .process-step:hover .step-icon {
+            border-color: var(--copper);
+            background: rgba(184, 115, 51, 0.1);
+        }
+        
+        .step-title {
+            font-family: var(--font-heading);
+            font-size: 1.1rem;
+            color: var(--warm-white);
+            margin-bottom: 0.5rem;
+        }
+        
+        .step-desc {
+            font-family: var(--font-body);
+            font-weight: 300;
+            font-size: 0.85rem;
+            color: var(--muted);
+            max-width: 200px;
+            margin: 0 auto;
+        }
+        
+        /* ===== TESTIMONIALS SECTION ===== */
+        .testimonials-section {
+            background: var(--dark);
+            padding: 6rem 2rem;
+            overflow: hidden;
+        }
+        
+        .testimonial-carousel {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            height: 340px;
+        }
+        
+        .testimonial-card {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.85);
+            background: var(--card-bg);
+            border: 1px solid rgba(184, 115, 51, 0.2);
+            border-radius: 16px;
+            padding: 2.5rem;
+            width: 480px;
+            max-width: 85vw;
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1),
+                        opacity   0.55s cubic-bezier(0.4, 0, 0.2, 1),
+                        filter    0.55s ease,
+                        border-color 0.3s ease,
+                        box-shadow   0.4s ease;
+            will-change: transform, opacity;
+        }
+        
+        /* ── CENTER: fully visible, front ── */
+        .testimonial-card.center {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+            border-color: var(--copper);
+            box-shadow: 0 20px 60px rgba(184, 115, 51, 0.2);
+            z-index: 10;
+            pointer-events: all;
+            filter: none;
+        }
+        
+        /* ── SIDE LEFT: peeking left ── */
+        .testimonial-card.side-left {
+            opacity: 0.5;
+            filter: blur(1px);
+            transform: translate(calc(-50% - 300px), -50%) scale(0.82);
+            z-index: 5;
+        }
+        
+        /* ── SIDE RIGHT: peeking right ── */
+        .testimonial-card.side-right {
+            opacity: 0.5;
+            filter: blur(1px);
+            transform: translate(calc(-50% + 300px), -50%) scale(0.82);
+            z-index: 5;
+        }
+        
+        /* ── HIDDEN: off-screen, invisible ── */
+        .testimonial-card.far-left,
+        .testimonial-card.far-right,
+        .testimonial-card.hidden-card {
+            opacity: 0;
+            pointer-events: none;
+            transform: translate(-50%, -50%) scale(0.7);
+            z-index: 1;
+        }
+        
+        .quote-mark {
+            position: absolute;
+            top: 1rem;
+            right: 2rem;
+            font-family: var(--font-numbers);
+            font-size: 6rem;
+            color: var(--copper);
+            opacity: 0.15;
+            line-height: 1;
+        }
+        
+        .testimonial-stars {
+            color: var(--copper);
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+        
+        .testimonial-text {
+            font-family: var(--font-display);
+            font-style: italic;
+            font-size: 1rem;
+            color: var(--warm-white);
+            margin-bottom: 1.5rem;
+            line-height: 1.75;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .author-name {
+            font-family: var(--font-body);
+            font-weight: 600;
+            color: var(--warm-white);
+        }
+        
+        .author-location {
+            font-family: var(--font-body);
+            font-weight: 300;
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+        
+        /* Nav sits BELOW the carousel, never overlapping */
+        .carousel-nav {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2.5rem;
+        }
+        
+        .carousel-btn {
+            width: 48px;
+            height: 48px;
+            background: transparent;
+            border: 1px solid var(--copper);
+            border-radius: 50%;
+            color: var(--copper);
+            cursor: none;
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .carousel-btn:hover {
+            background: var(--copper);
+            color: var(--dark);
+        }
+
+        /* ── Responsive tweaks ── */
+        @media (max-width: 900px) {
+            .testimonial-carousel { height: 380px; }
+            .testimonial-card.side-left  { transform: translate(calc(-50% - 220px), -50%) scale(0.78); }
+            .testimonial-card.side-right { transform: translate(calc(-50% + 220px), -50%) scale(0.78); }
+        }
+
+        @media (max-width: 600px) {
+            .testimonial-carousel { height: 340px; }
+            /* On mobile hide side cards — just show center */
+            .testimonial-card.side-left,
+            .testimonial-card.side-right { opacity: 0; pointer-events: none; }
+        }
+        
+        /* ===== WHY KOVAI VETRI SECTION ===== */
+        .why-section {
+            background: var(--section-bg);
+            padding: 6rem 2rem;
+        }
+        
+        .why-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 45% 55%;
+            gap: 4rem;
+            align-items: center;
+        }
+        
+        .why-left {
+            padding-right: 2rem;
+        }
+        
+        .why-tag {
+            font-family: var(--font-accent);
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
+            color: var(--copper);
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+        
+        .why-heading {
+            font-family: var(--font-display);
+            font-size: 2.8rem;
+            color: var(--warm-white);
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+        
+        .why-text {
+            font-family: var(--font-body);
+            font-weight: 300;
+            color: var(--muted);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+        
+        .why-number {
+            font-family: var(--font-numbers);
+            font-style: italic;
+            font-size: 8rem;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+        
+        .why-number-label {
+            font-family: var(--font-accent);
+            color: var(--muted);
+            letter-spacing: 0.1em;
+        }
+        
+        .why-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+        
+        .why-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(184, 115, 51, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .why-card-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .why-card-number {
+            font-family: var(--font-numbers);
+            font-style: italic;
+            font-size: 2.5rem;
+            color: var(--copper);
+            margin-bottom: 0.5rem;
+        }
+        
+        .why-card-title {
+            font-family: var(--font-body);
+            font-weight: 500;
+            color: var(--warm-white);
+            margin-bottom: 0.5rem;
+        }
+        
+        .why-card-desc {
+            font-family: var(--font-body);
+            font-weight: 300;
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+        
+        /* ===== CONSULTATION FORM SECTION ===== */
+        .consultation-section {
+            padding: 6rem 2rem;
+        }
+        
+        .consultation-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 40% 60%;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(184, 115, 51, 0.2);
+        }
+        
+        .consultation-left {
+            background: var(--navy);
+            padding: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .consultation-left::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(184, 115, 51, 0.1) 0%, transparent 70%);
+        }
+        
+        .consultation-heading {
+            font-family: var(--font-display);
+            font-style: italic;
+            font-size: 2.2rem;
+            color: var(--warm-white);
+            margin-bottom: 0.75rem;
+        }
+        
+        .consultation-sub {
+            font-family: var(--font-body);
+            font-weight: 300;
+            color: var(--copper);
+            margin-bottom: 2rem;
+        }
+        
+        .consultation-bullets {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+        
+        .consultation-bullet {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-family: var(--font-body);
+            color: var(--warm-white);
+            margin-bottom: 0.75rem;
+        }
+        
+        .check-mark {
+            color: var(--copper);
+        }
+        
+        .consultation-phone {
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 1.5rem;
+            color: var(--copper);
+            margin-bottom: 1.5rem;
+            display: block;
+            text-decoration: none;
+        }
+        
+        .whatsapp-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: #25D366;
+            color: var(--white);
+            font-family: var(--font-body);
+            font-weight: 500;
+            border-radius: 8px;
+            text-decoration: none;
+            margin-bottom: 2rem;
+            transition: var(--transition-smooth);
+        }
+        
+        .whatsapp-btn:hover {
+            background: #1ebc57;
+            transform: translateY(-2px);
+        }
+        
+        .service-areas {
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+        
+        .consultation-right {
+            background: var(--card-bg);
+            padding: 3rem;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+        
+        .form-group {
+            position: relative;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(184, 115, 51, 0.05);
+            border: 1px solid rgba(184, 115, 51, 0.2);
+            border-radius: 8px;
+            color: var(--warm-white);
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            transition: var(--transition-smooth);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--copper);
+            background: rgba(184, 115, 51, 0.1);
+        }
+        
+        .form-input::placeholder {
+            color: var(--muted);
+        }
+        
+        .form-select {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(184, 115, 51, 0.05);
+            border: 1px solid rgba(184, 115, 51, 0.2);
+            border-radius: 8px;
+            color: var(--warm-white);
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            cursor: none;
+        }
+        
+        .form-select:focus {
+            outline: none;
+            border-color: var(--copper);
+        }
+        
+        .form-select option {
+            background: var(--card-bg);
+            color: var(--warm-white);
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .checkbox-item input {
+            accent-color: var(--copper);
+            width: 18px;
+            height: 18px;
+        }
+        
+        .checkbox-item label {
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            color: var(--warm-white);
+            cursor: none;
+        }
+        
+        .range-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .range-slider {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 6px;
+            background: rgba(184, 115, 51, 0.2);
+            border-radius: 3px;
+            outline: none;
+        }
+        
+        .range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--copper);
+            border-radius: 50%;
+            cursor: none;
+        }
+        
+        .range-value {
+            font-family: var(--font-numbers);
+            font-style: italic;
+            color: var(--copper);
+            min-width: 80px;
+            text-align: right;
+        }
+        
+        .form-submit {
+            width: 100%;
+            padding: 1.25rem;
+            background: linear-gradient(135deg, var(--copper) 0%, var(--copper-light) 50%, var(--copper) 100%);
+            color: var(--dark);
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: none;
+            transition: var(--transition-smooth);
+            margin-top: 1rem;
+        }
+        
+        .form-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(184, 115, 51, 0.3);
+        }
+        
+        .form-privacy {
+            font-family: var(--font-body);
+            font-size: 0.8rem;
+            color: var(--muted);
+            text-align: center;
+            margin-top: 1rem;
+        }
+        
+        /* ===== SUCCESS OVERLAY ===== */
+        .success-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 10, 15, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10002;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition-smooth);
+        }
+        
+        .success-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .success-content {
+            text-align: center;
+            padding: 3rem;
+        }
+        
+        .success-check {
+            width: 100px;
+            height: 100px;
+            background: var(--copper);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 3rem;
+            color: var(--dark);
+            animation: successPop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        @keyframes successPop {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+        
+        .success-title {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            color: var(--warm-white);
+            margin-bottom: 0.5rem;
+        }
+        
+        .success-text {
+            font-family: var(--font-body);
+            color: var(--muted);
+        }
+        
+        /* ===== FOOTER ===== */
+        .footer {
+            background: var(--dark);
+            padding: 4rem 2rem 2rem;
+            position: relative;
+        }
+        
+        .footer::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(184, 115, 51, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(184, 115, 51, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+        
+        .footer-grid {
+            max-width: 1440px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr 1fr;
+            gap: 3rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .footer-tagline {
+            font-family: var(--font-display);
+            font-style: italic;
+            color: var(--copper);
+            margin-bottom: 1.5rem;
+        }
+        
+        .footer-socials {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .footer-social {
+            width: 40px;
+            height: 40px;
+            background: rgba(184, 115, 51, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--copper);
+            transition: var(--transition-smooth);
+            text-decoration: none;
+        }
+        
+        .footer-social:hover {
+            background: var(--copper);
+            color: var(--dark);
+        }
+        
+        .footer-title {
+            font-family: var(--font-heading);
+            font-size: 1.1rem;
+            color: var(--warm-white);
+            margin-bottom: 1.5rem;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+        
+        .footer-links a {
+            font-family: var(--font-body);
+            font-weight: 300;
+            font-size: 0.9rem;
+            color: var(--muted);
+            text-decoration: none;
+            transition: var(--transition-smooth);
+        }
+        
+        .footer-links a:hover {
+            color: var(--copper);
+        }
+        
+        .footer-contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-family: var(--font-body);
+            font-weight: 300;
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-bottom: 0.75rem;
+        }
+        
+        .footer-contact-item svg {
+            color: var(--copper);
+            flex-shrink: 0;
+        }
+        
+        .footer-bottom {
+            max-width: 1440px;
+            margin: 3rem auto 0;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(184, 115, 51, 0.1);
+            text-align: center;
+            font-family: var(--font-body);
+            font-weight: 300;
+            font-size: 0.85rem;
+            color: var(--muted);
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* ===== WHATSAPP FLOATING BUTTON ===== */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            background: #25D366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            z-index: 9999;
+            text-decoration: none;
+            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+            transition: var(--transition-smooth);
+        }
+        
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+        }
+        
+        .whatsapp-pulse {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: #25D366;
+            animation: whatsappPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes whatsappPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.4); opacity: 0; }
+        }
+        
+        .whatsapp-tooltip {
+            position: absolute;
+            right: 70px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--dark);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: var(--transition-smooth);
+            pointer-events: none;
+            border: 1px solid rgba(184, 115, 51, 0.2);
+        }
+        
+        .whatsapp-float:hover .whatsapp-tooltip {
+            opacity: 1;
+        }
+        
+        /* ===== CONFETTI ===== */
+        .confetti-container {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 10003;
+            overflow: hidden;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--copper);
+            animation: confettiFall 3s ease-out forwards;
+        }
+        
+        @keyframes confettiFall {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+        
+        /* ===== RESPONSIVE STYLES ===== */
+        /* ===== ENHANCED HOVER ANIMATIONS ===== */
+
+        /* Portfolio card — lift + copper border glow */
+        .portfolio-card {
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                        box-shadow 0.4s ease,
+                        border-color 0.3s ease;
+        }
+        .portfolio-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 24px 48px rgba(184, 115, 51, 0.2);
+        }
+
+        /* Portfolio overlay label slide-up */
+        .portfolio-overlay-title {
+            transform: translateY(8px);
+            transition: transform 0.4s ease, opacity 0.4s ease;
+            opacity: 0;
+        }
+        .portfolio-card:hover .portfolio-overlay-title {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Portfolio category badge pulse on hover */
+        .portfolio-category {
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+        .portfolio-card:hover .portfolio-category {
+            transform: scale(1.05);
+        }
+
+        /* Service card icon ring animation */
+        .service-icon {
+            transition: background 0.4s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
+        }
+        .service-card:hover .service-icon {
+            background: rgba(184, 115, 51, 0.25);
+            transform: rotate(8deg) scale(1.1);
+            box-shadow: 0 0 20px rgba(184, 115, 51, 0.3);
+        }
+
+        /* Service card name copper shimmer */
+        .service-name {
+            transition: color 0.3s ease;
+        }
+        .service-card:hover .service-name {
+            color: var(--copper-light);
+        }
+
+        /* Service feature tags reveal */
+        .service-feature {
+            transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease;
+        }
+        .service-card:hover .service-feature {
+            background: rgba(184, 115, 51, 0.12);
+            color: var(--copper-light);
+        }
+
+        /* Why card hover */
+        .why-card {
+            transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.3s ease;
+        }
+        .why-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 40px rgba(184, 115, 51, 0.15);
+            border-color: var(--copper);
+        }
+        .why-card .why-card-icon {
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .why-card:hover .why-card-icon {
+            transform: scale(1.15) rotate(-6deg);
+        }
+
+        /* Footer social icon color + scale */
+        .footer-social {
+            transition: background 0.3s ease, color 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .footer-social:hover {
+            transform: scale(1.15) rotate(8deg);
+        }
+
+        /* Footer links copper underline */
+        .footer-links a {
+            position: relative;
+        }
+        .footer-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--copper);
+            transition: width 0.3s ease;
+        }
+        .footer-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Announcement strip text shimmer */
+        @keyframes text-shimmer {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.75; }
+        }
+
+        /* Stat number copper underline grow */
+        .stat-item {
+            transition: transform 0.3s ease;
+        }
+        .stat-item:hover {
+            transform: translateY(-3px);
+        }
+
+        /* Process step hover */
+        .process-step {
+            transition: transform 0.35s ease;
+        }
+        .process-step:hover {
+            transform: translateY(-5px);
+        }
+        .process-step-icon {
+            transition: box-shadow 0.35s ease, background 0.35s ease;
+        }
+        .process-step:hover .process-step-icon {
+            box-shadow: 0 0 24px rgba(184, 115, 51, 0.5);
+            background: rgba(184, 115, 51, 0.25);
+        }
+
+        /* ===== RESPONSIVE BREAKPOINTS ===== */
+
+        @media (max-width: 1280px) {
+            .hero-title { font-size: 9vw; }
+            .portfolio-grid { grid-template-columns: repeat(2, 1fr); }
+            .services-grid { grid-template-columns: repeat(2, 1fr); }
+            .footer-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        
+        @media (max-width: 1024px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .stat-item:not(:last-child)::after { display: none; }
+            .why-container { grid-template-columns: 1fr; }
+            .why-left { padding-right: 0; }
+            .consultation-container { grid-template-columns: 1fr; }
+            .section-title { font-size: 2.4rem; }
+            .services-grid { gap: 1.5rem; }
+            .ba-slider-track { gap: 1.5rem; }
+        }
+        
+        /* ===== TABLET (768px) ===== */
+        @media (max-width: 768px) {
+            .nav-links, .nav-cta { display: none; }
+            .hamburger { display: flex; }
+            .hero-title { font-size: 12vw; }
+            .hero-subtitle { font-size: 1rem; }
+            .hero-description { font-size: 0.9rem; max-width: 90%; }
+            .section-title { font-size: 2rem; }
+            .section-subtitle { font-size: 0.9rem; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .portfolio-grid { grid-template-columns: 1fr; }
+            .portfolio-card.wide { grid-column: span 1; aspect-ratio: 16/9; }
+            .portfolio-filter { gap: 0.5rem; }
+            .filter-btn { padding: 0.4rem 0.9rem; font-size: 0.8rem; }
+            .services-grid { grid-template-columns: 1fr; }
+            .service-card { padding: 1.5rem; }
+            .process-steps { flex-direction: column; gap: 2rem; }
+            .timeline-line, .timeline-progress { display: none; }
+            .form-grid { grid-template-columns: 1fr; }
+            .why-cards { grid-template-columns: 1fr; }
+            .why-number { font-size: 6rem; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .footer-grid > div { margin-bottom: 2rem; }
+            .announcement-strip { flex-direction: column; height: auto; padding: 0.75rem 1rem; gap: 0.5rem; }
+            .announcement-left, .announcement-right { width: 100%; justify-content: center; }
+            .consultation-left, .consultation-right { padding: 2rem 1.5rem; }
+        }
+
+        /* ===== SMALL MOBILE (480px) ===== */
+        @media (max-width: 480px) {
+            .hero-image-strip { flex-direction: column; align-items: center; }
+            .hero-image { width: 100%; max-width: 280px; }
+            .hero-title { font-size: 14vw; line-height: 1.1; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .stat-item { padding: 1rem 0; }
+            .stat-item:not(:last-child)::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 10%;
+                width: 80%;
+                height: 1px;
+                background: rgba(184, 115, 51, 0.3);
+            }
+            .stat-number { font-size: 3rem; }
+            .ba-pair { min-width: 100%; }
+            .why-number { font-size: 5rem; }
+            .consultation-left, .consultation-right { padding: 1.5rem; }
+            .portfolio-filter { flex-wrap: wrap; justify-content: center; }
+            .filter-btn { flex: 0 0 auto; }
+            .service-card { padding: 1.25rem; }
+            .section-title { font-size: 1.7rem; }
+            .nav-logo-text { display: none; }
+            .footer-grid { gap: 1.5rem; }
+            .process-step-number { font-size: 2rem; }
+        }
+
+        /* ===== EXTRA SMALL (375px) ===== */
+        @media (max-width: 375px) {
+            .hero-title { font-size: 15vw; }
+            .section-title { font-size: 1.5rem; }
+            .section-subtitle { font-size: 0.82rem; }
+            .stat-number { font-size: 2.6rem; }
+            .service-card { padding: 1rem; }
+            .consultation-left h2 { font-size: 1.5rem; }
+            .form-input, .form-textarea, .form-select { font-size: 0.9rem; padding: 0.7rem 1rem; }
+            .btn-primary, .btn-secondary { padding: 0.8rem 1.4rem; font-size: 0.85rem; }
+            .footer-bottom { font-size: 0.75rem; }
+            .why-number { font-size: 4rem; }
+            .announcement-strip { font-size: 0.78rem; }
+        }
+        
+        /* ===== GSAP SAFETY NET =====
+           Ensures elements are never permanently invisible if GSAP/ScrollTrigger fails to play.
+           GSAP from() sets inline styles; clearProps removes them after animation completes. */
+        .section-label, .section-title, .section-subtitle,
+        .stat-item, .portfolio-card,
+        .ba-pair, .process-step,
+        .why-left, .why-card, .consultation-left, .consultation-right,
+        .form-group, .footer-grid > div, .footer-bottom {
+            will-change: opacity, transform;
+        }
+
+        /* ===== REDUCED MOTION ===== */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+    
+    <!-- Noise Overlay -->
+    <div class="noise-overlay"></div>
+    
+    <!-- Page Load Curtain -->
+    <div class="curtain">
+        <div class="curtain-top">
+            <div class="curtain-logo">KV</div>
+        </div>
+        <div class="curtain-bottom">
+            <div class="curtain-logo">KV</div>
+        </div>
+    </div>
+    
+    <!-- Announcement Strip -->
+    <div class="announcement-strip">
+        <div class="announcement-left">
+            <div class="pulse-dot"></div>
+            <span>★★★★★ Rated Interior Company in Coimbatore — Since 2006</span>
+        </div>
+        <div class="announcement-right">
+            <span>📞 Call Now: +91 94860 45434</span>
+        </div>
+    </div>
+    
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="#" class="logo">
+                <div class="logo-monogram">KV</div>
+                <div class="logo-text">
+                    <span class="logo-brand">KOVAI VETRI</span>
+                    <span class="logo-sub">INTERIORS</span>
+                </div>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#commercial">Commercial</a></li>
+                <li><a href="#residential">Residential</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <a href="#contact" class="nav-cta">Free Consultation</a>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Mobile Menu -->
+    <div class="mobile-menu">
+        <a href="#home">Home</a>
+        <a href="#commercial">Commercial</a>
+        <a href="#residential">Residential</a>
+        <a href="#projects">Projects</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+    </div>
+    
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <canvas class="hero-canvas"></canvas>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <div class="hero-badge">✦ COIMBATORE'S #1 COMMERCIAL INTERIOR STUDIO · EST. 2006</div>
+            <h1 class="hero-title">
+                <span class="hero-title-line1">Spaces That Speak</span>
+                <span class="hero-title-line2 copper-text">For Your Brand.</span>
+            </h1>
+            <p class="hero-subtitle">Coimbatore's most trusted commercial and residential interior firm. Offices, showrooms, hospitals, bakeries, schools — we transform every space.</p>
+            <div class="hero-cta-row">
+                <a href="#projects" class="btn-primary">Explore Our Work</a>
+                <a href="#contact" class="btn-secondary">Get Free Consultation</a>
+            </div>
+            <div class="trust-bar">
+                <span class="trust-item">★ 5/5 Rating</span>
+                <span class="trust-dot"></span>
+                <span class="trust-item">Since 2006</span>
+                <span class="trust-dot"></span>
+                <span class="trust-item">500+ Projects</span>
+                <span class="trust-dot"></span>
+                <span class="trust-item">All of Tamil Nadu</span>
+            </div>
+            <div class="hero-image-strip">
+                <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&q=80" alt="Corporate Office" class="hero-image" loading="lazy" onerror="kvImgFallback(this)">
+                <img src="https://images.unsplash.com/photo-1631679706909-1844bbd07221?w=600&q=80" alt="Showroom Interior" class="hero-image" loading="lazy" onerror="kvImgFallback(this)">
+                <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=600&q=80" alt="Hospital Interior" class="hero-image" loading="lazy" onerror="kvImgFallback(this)">
+                <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&q=80" alt="Restaurant Interior" class="hero-image" loading="lazy" onerror="kvImgFallback(this)">
+                <img src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=600&q=80" alt="False Ceiling" class="hero-image" loading="lazy" onerror="kvImgFallback(this)">
+            </div>
+        </div>
+    </section>
+    
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-number copper-text" data-count="500">0</div>
+                <div class="stat-label">Projects Completed</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number copper-text" data-count-year="2006">0</div>
+                <div class="stat-label">Years of Excellence</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number copper-text">5★</div>
+                <div class="stat-label">Google Rating</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number copper-text" data-count="50">0</div>
+                <div class="stat-label">Project Categories</div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Portfolio Section -->
+    <section class="portfolio-section" id="projects">
+        <div class="section-header">
+            <h2 class="section-title">Our Finest Projects</h2>
+            <p class="section-subtitle">Every space has a story. Here are the ones we're proud of.</p>
+        </div>
+        <div class="filter-tabs">
+            <button class="filter-tab active" data-filter="all">All</button>
+            <button class="filter-tab" data-filter="office">Office</button>
+            <button class="filter-tab" data-filter="showroom">Showroom</button>
+            <button class="filter-tab" data-filter="hospital">Hospital</button>
+            <button class="filter-tab" data-filter="bakery">Bakery & Restaurant</button>
+            <button class="filter-tab" data-filter="residential">Residential</button>
+            <button class="filter-tab" data-filter="ceiling">False Ceiling</button>
+            <button class="filter-tab" data-filter="glass">Glass & Partition</button>
+        </div>
+        <div class="portfolio-grid">
+            <div class="portfolio-card tall" data-category="office">
+                <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=85" alt="Corporate IT Office" class="portfolio-image" loading="lazy" onerror="kvImgFallback(this)">
+                <div class="portfolio-overlay">
+                    <span class="portfolio-category">Office</span>
+                    <h3 class="portfolio-title">Corporate IT Office — Coimbatore</h3>
+                    <a href="#" class="portfolio-link">View Project →</a>
+                </div>
+            </div>
+            <div class="portfolio-card wide" data-category="residential">
+                <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=85" alt="Modular Kitchen" class="portfolio-image" loading="lazy" onerror="kvImgFallback(this)">
+                <div class="portfolio-overlay">
+                    <span class="portfolio-category">Residential</span>
+                    <h3 class="portfolio-title">Modular Kitchen Design</h3>
+                    <a href="#" class="portfolio-link">View Project →</a>
+                </div>
+            </div>
+            <div class="portfolio-card tall" data-category="hospital">
+                <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&q=85" alt="Clinic Reception" class="portfolio-image" loading="lazy" onerror="kvImgFallback(this)">
+                <div class="portfolio-overlay">
+                    <span class="portfolio-category">Hospital</span>
+                    <h3 class="portfolio-title">Clinic Reception Interior</h3>
+                    <a href="#" class="portfolio-link">View Project →</a>
+                </div>
+            </div>
+            <div class="portfolio-card wide" data-category="bakery">
+                <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=85" alt="Bakery Interior" class="portfolio-image" loading="lazy" onerror="kvImgFallback(this)">
+                <div class="portfolio-overlay">
+                    <span class="portfolio-category">Bakery</span>
+                    <h3 class="portfolio-title">Bakery Interior — Annur</h3>
+                    <a href="#" class="portfolio-link">View Project →</a>
+                </div>
+            </div>
+            <div class="portfolio-card tall" data-category="ceiling">
+                <img src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=800&q=85" alt="False Ceiling" class="portfolio-image" loading="lazy" onerror="kvImgFallback(this)">
+                <div class="portfolio-overlay">
+                    <span class="portfolio-category">Ceiling</span>
+                    <h3 class="portfolio-title">Armstrong Grid Ceiling</h3>
+                    <a href="#" class="portfolio-link">View Project →</a>
+                </div>
+            </div>
+            <div class="portfolio-card wide" data-category="showroom">
+                <img src="https://images.unsplash.com/photo-1631679706909-1844bbd07221?w=800&q=85" alt="Showroom" class="portfolio-image" loading="lazy" onerror="kvImgFallback(this)">
+                <div class="portfolio-overlay">
+                    <span class="portfolio-category">Showroom</span>
+                    <h3 class="portfolio-title">Bike Showroom Interior</h3>
+                    <a href="#" class="portfolio-link">View Project →</a>
+                </div>
+            </div>
+            <div class="portfolio-card tall" data-category="residential">
+                <img src="https://images.unsplash.com/photo-1540518614846-7eded433c457?w=800&q=85" alt="Bedroom" class="portfolio-image" loading="lazy" onerror="kvImgFallback(this)">
+                <div class="portfolio-overlay">
+                    <span class="portfolio-category">Residential</span>
+                    <h3 class="portfolio-title">Bedroom Interior Design</h3>
+                    <a href="#" class="portfolio-link">View Project →</a>
+                </div>
+            </div>
+            <div class="portfolio-card wide" data-category="office">
+                <img src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=800&q=85" alt="BPO Office" class="portfolio-image" loading="lazy" onerror="kvImgFallback(this)">
+                <div class="portfolio-overlay">
+                    <span class="portfolio-category">Office</span>
+                    <h3 class="portfolio-title">BPO Call Center Interior</h3>
+                    <a href="#" class="portfolio-link">View Project →</a>
+                </div>
+            </div>
+            <div class="portfolio-card tall" data-category="residential">
+                <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=85" alt="L-Shape Kitchen" class="portfolio-image" loading="lazy" onerror="kvImgFallback(this)">
+                <div class="portfolio-overlay">
+                    <span class="portfolio-category">Residential</span>
+                    <h3 class="portfolio-title">Modular Kitchen — L-Shape</h3>
+                    <a href="#" class="portfolio-link">View Project →</a>
+                </div>
+            </div>
+            <div class="portfolio-card wide" data-category="glass">
+                <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=85" alt="Glass Partition" class="portfolio-image" loading="lazy" onerror="kvImgFallback(this)">
+                <div class="portfolio-overlay">
+                    <span class="portfolio-category">Glass</span>
+                    <h3 class="portfolio-title">Toughened Glass Office Partition</h3>
+                    <a href="#" class="portfolio-link">View Project →</a>
+                </div>
+            </div>
+            <div class="portfolio-card tall" data-category="office">
+                <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=800&q=85" alt="Corporate Office" class="portfolio-image" loading="lazy" onerror="kvImgFallback(this)">
+                <div class="portfolio-overlay">
+                    <span class="portfolio-category">Office</span>
+                    <h3 class="portfolio-title">Corporate Office — Saravanampatti</h3>
+                    <a href="#" class="portfolio-link">View Project →</a>
+                </div>
+            </div>
+            <div class="portfolio-card wide" data-category="hospital">
+                <img src="https://images.unsplash.com/photo-1588854337236-6889d631faa8?w=800&q=85" alt="Dental Clinic" class="portfolio-image" loading="lazy" onerror="kvImgFallback(this)">
+                <div class="portfolio-overlay">
+                    <span class="portfolio-category">Hospital</span>
+                    <h3 class="portfolio-title">Dental Clinic Interior</h3>
+                    <a href="#" class="portfolio-link">View Project →</a>
+                </div>
+            </div>
+            <div class="portfolio-card tall" data-category="residential">
+                <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=85" alt="Living Room" class="portfolio-image" loading="lazy" onerror="kvImgFallback(this)">
+                <div class="portfolio-overlay">
+                    <span class="portfolio-category">Residential</span>
+                    <h3 class="portfolio-title">Living Room Design</h3>
+                    <a href="#" class="portfolio-link">View Project →</a>
+                </div>
+            </div>
+            <div class="portfolio-card wide" data-category="ceiling">
+                <img src="https://images.unsplash.com/photo-1481277542470-605612bd2d61?w=800&q=85" alt="Gypsum Ceiling" class="portfolio-image" loading="lazy" onerror="kvImgFallback(this)">
+                <div class="portfolio-overlay">
+                    <span class="portfolio-category">Ceiling</span>
+                    <h3 class="portfolio-title">Gypsum Board False Ceiling</h3>
+                    <a href="#" class="portfolio-link">View Project →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Services Section -->
+    <section class="services-section" id="commercial">
+        <div class="section-header">
+            <h2 class="section-title">What We Build</h2>
+            <p class="section-subtitle">End-to-end interior solutions across every category</p>
+        </div>
+        <div class="services-grid">
+            <div class="service-card" data-lucide="briefcase">
+                <div class="service-icon"></div>
+                <h3 class="service-name">Corporate Office Interior</h3>
+                <p class="service-range">Custom Quote</p>
+                <ul class="service-features">
+                    <li class="service-feature">Open Plan</li>
+                    <li class="service-feature">Cabin</li>
+                    <li class="service-feature">Partition</li>
+                    <li class="service-feature">Reception</li>
+                </ul>
+            </div>
+            <div class="service-card" data-lucide="shopping-bag">
+                <div class="service-icon"></div>
+                <h3 class="service-name">Showroom & Retail</h3>
+                <p class="service-range">Custom Quote</p>
+                <ul class="service-features">
+                    <li class="service-feature">Bike Showroom</li>
+                    <li class="service-feature">Mobile Shop</li>
+                    <li class="service-feature">Textile</li>
+                    <li class="service-feature">Jewellery</li>
+                </ul>
+            </div>
+            <div class="service-card" data-lucide="stethoscope">
+                <div class="service-icon"></div>
+                <h3 class="service-name">Hospital & Clinic</h3>
+                <p class="service-range">Custom Quote</p>
+                <ul class="service-features">
+                    <li class="service-feature">Dental</li>
+                    <li class="service-feature">Pharmacy</li>
+                    <li class="service-feature">Reception</li>
+                    <li class="service-feature">Clinic</li>
+                </ul>
+            </div>
+            <div class="service-card" data-lucide="utensils">
+                <div class="service-icon"></div>
+                <h3 class="service-name">Bakery & Restaurant</h3>
+                <p class="service-range">Custom Quote</p>
+                <ul class="service-features">
+                    <li class="service-feature">Bakery</li>
+                    <li class="service-feature">Restaurant</li>
+                    <li class="service-feature">Café</li>
+                    <li class="service-feature">Bar</li>
+                </ul>
+            </div>
+            <div class="service-card" data-lucide="layers">
+                <div class="service-icon"></div>
+                <h3 class="service-name">False Ceiling</h3>
+                <p class="service-range">₹50–150/sqft</p>
+                <ul class="service-features">
+                    <li class="service-feature">Gypsum</li>
+                    <li class="service-feature">Armstrong</li>
+                    <li class="service-feature">Hilux</li>
+                    <li class="service-feature">Grid</li>
+                </ul>
+            </div>
+            <div class="service-card" data-lucide="layout-grid">
+                <div class="service-icon"></div>
+                <h3 class="service-name">Glass & Partition</h3>
+                <p class="service-range">Custom Quote</p>
+                <ul class="service-features">
+                    <li class="service-feature">Toughened Glass</li>
+                    <li class="service-feature">Fixed Glass</li>
+                    <li class="service-feature">Partition Walls</li>
+                </ul>
+            </div>
+            <div class="service-card" data-lucide="home">
+                <div class="service-icon"></div>
+                <h3 class="service-name">Residential Interior</h3>
+                <p class="service-range">Custom Quote</p>
+                <ul class="service-features">
+                    <li class="service-feature">Bedroom</li>
+                    <li class="service-feature">Kitchen</li>
+                    <li class="service-feature">Living Room</li>
+                    <li class="service-feature">Pooja Room</li>
+                </ul>
+            </div>
+            <div class="service-card" data-lucide="building">
+                <div class="service-icon"></div>
+                <h3 class="service-name">ACP Elevation</h3>
+                <p class="service-range">Custom Quote</p>
+                <ul class="service-features">
+                    <li class="service-feature">Hospital ACP</li>
+                    <li class="service-feature">Home ACP</li>
+                    <li class="service-feature">Complex ACP</li>
+                </ul>
+            </div>
+            <div class="service-card" data-lucide="sparkles">
+                <div class="service-icon"></div>
+                <h3 class="service-name">Free Consultation</h3>
+                <p class="service-range">FREE</p>
+                <ul class="service-features">
+                    <li class="service-feature">Space Planning</li>
+                    <li class="service-feature">Budget Estimate</li>
+                    <li class="service-feature">3D Concept</li>
+                    <li class="service-feature">Site Visit</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Before/After Section -->
+    <section class="before-after-section">
+        <div class="section-header">
+            <h2 class="section-title">The Kovai Vetri Transformation</h2>
+            <p class="section-subtitle">See the difference we make</p>
+        </div>
+        <div class="before-after-container">
+            <div class="ba-pair">
+                <div class="ba-slider">
+                    <img src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=900&q=80" alt="Before" class="ba-before" onerror="kvImgFallback(this)">
+                    <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=900&q=80" alt="After" class="ba-after" onerror="kvImgFallback(this)">
+                    <input type="range" min="0" max="100" value="50" class="ba-range">
+                    <div class="ba-divider"></div>
+                    <div class="ba-handle">←→</div>
+                </div>
+                <div class="ba-labels">
+                    <span class="ba-label-before">BEFORE</span>
+                    <span class="ba-label-after">AFTER</span>
+                </div>
+            </div>
+            <div class="ba-pair">
+                <div class="ba-slider">
+                    <img src="https://images.unsplash.com/photo-1588854337236-6889d631faa8?w=900&q=80" alt="Before" class="ba-before" onerror="kvImgFallback(this)">
+                    <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=900&q=80" alt="After" class="ba-after" onerror="kvImgFallback(this)">
+                    <input type="range" min="0" max="100" value="50" class="ba-range">
+                    <div class="ba-divider"></div>
+                    <div class="ba-handle">←→</div>
+                </div>
+                <div class="ba-labels">
+                    <span class="ba-label-before">BEFORE</span>
+                    <span class="ba-label-after">AFTER</span>
+                </div>
+            </div>
+            <div class="ba-pair">
+                <div class="ba-slider">
+                    <img src="https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=900&q=80" alt="Before" class="ba-before" onerror="kvImgFallback(this)">
+                    <img src="https://images.unsplash.com/photo-1540518614846-7eded433c457?w=900&q=80" alt="After" class="ba-after" onerror="kvImgFallback(this)">
+                    <input type="range" min="0" max="100" value="50" class="ba-range">
+                    <div class="ba-divider"></div>
+                    <div class="ba-handle">←→</div>
+                </div>
+                <div class="ba-labels">
+                    <span class="ba-label-before">BEFORE</span>
+                    <span class="ba-label-after">AFTER</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Process Section -->
+    <section class="process-section" id="about">
+        <div class="section-header">
+            <h2 class="section-title">How We Work</h2>
+            <p class="section-subtitle">A seamless journey from concept to completion</p>
+        </div>
+        <div class="process-timeline">
+            <div class="timeline-line"></div>
+            <div class="timeline-progress"></div>
+            <div class="process-steps">
+                <div class="process-step">
+                    <div class="step-icon">🗣️</div>
+                    <h3 class="step-title">Free Consultation</h3>
+                    <p class="step-desc">We visit your site, understand your vision and budget</p>
+                </div>
+                <div class="process-step">
+                    <div class="step-icon">📐</div>
+                    <h3 class="step-title">Site Measurement</h3>
+                    <p class="step-desc">Precise measurements of every corner of your space</p>
+                </div>
+                <div class="process-step">
+                    <div class="step-icon">🎨</div>
+                    <h3 class="step-title">Design Concept</h3>
+                    <p class="step-desc">3D renders and mood boards tailored to your brand</p>
+                </div>
+                <div class="process-step">
+                    <div class="step-icon">✅</div>
+                    <h3 class="step-title">Your Approval</h3>
+                    <p class="step-desc">We refine until you're 100% satisfied with the design</p>
+                </div>
+                <div class="process-step">
+                    <div class="step-icon">🔨</div>
+                    <h3 class="step-title">Expert Execution</h3>
+                    <p class="step-desc">Skilled craftsmen bring the approved design to life</p>
+                </div>
+                <div class="process-step">
+                    <div class="step-icon">🏢</div>
+                    <h3 class="step-title">Handover</h3>
+                    <p class="step-desc">Final walkthrough, quality check, and post-completion support</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Testimonials Section -->
+    <section class="testimonials-section">
+        <div class="section-header">
+            <h2 class="section-title copper-text">Trusted Across Tamil Nadu.</h2>
+            <p class="section-subtitle">5★ reviews from real clients</p>
+        </div>
+        <div class="testimonial-carousel">
+            <div class="testimonial-card">
+                <div class="quote-mark">"</div>
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">Excellent work! They transformed our office space completely. The false ceiling and glass partition work is outstanding. Very professional team.</p>
+                <div class="testimonial-author">
+                    <span class="author-name">Rajesh Kumar</span>
+                    <span class="author-location">Coimbatore</span>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="quote-mark">"</div>
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">Best interior designers in Coimbatore. They did our hospital reception and clinic interior. Patients love the new look. Highly recommended!</p>
+                <div class="testimonial-author">
+                    <span class="author-name">Dr. Priya Anand</span>
+                    <span class="author-location">Saravanampatti</span>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="quote-mark">"</div>
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">Wonderful bakery interior design. Customers always compliment the ambiance. Kovai Vetri team understood exactly what we needed.</p>
+                <div class="testimonial-author">
+                    <span class="author-name">Murugan Bakery</span>
+                    <span class="author-location">Annur</span>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="quote-mark">"</div>
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">They did our bike showroom interior. The design is modern and attracts more customers. On-time delivery, great quality.</p>
+                <div class="testimonial-author">
+                    <span class="author-name">Karthik Subramaniam</span>
+                    <span class="author-location">Tirupur</span>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="quote-mark">"</div>
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">Beautiful bedroom and modular kitchen for our new apartment. Attention to detail is amazing. Worth every rupee!</p>
+                <div class="testimonial-author">
+                    <span class="author-name">Anitha & Vijay</span>
+                    <span class="author-location">Coimbatore</span>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-nav">
+            <button class="carousel-btn" id="prevTestimonial">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            </button>
+            <button class="carousel-btn" id="nextTestimonial">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+        </div>
+    </section>
+    
+    <!-- Why Kovai Vetri Section -->
+    <section class="why-section" id="residential">
+        <div class="why-container">
+            <div class="why-left">
+                <p class="why-tag">WHY KOVAI VETRI</p>
+                <h2 class="why-heading"><span id="whyYears">20</span> Years of Commercial Interior Excellence</h2>
+                <p class="why-text">From a single office in 2006 to Coimbatore's most sought-after interior firm, we have transformed 500+ spaces across Tamil Nadu — offices, hospitals, showrooms, schools and homes. We combine precision engineering with artistic vision.</p>
+                <div class="why-number copper-text" id="whyYearsNum">20+</div>
+                <p class="why-number-label">Years of Trust</p>
+            </div>
+            <div class="why-cards">
+                <div class="why-card">
+                    <div class="why-card-icon">🏆</div>
+                    <div class="why-card-number">500+</div>
+                    <h4 class="why-card-title">Projects Completed</h4>
+                    <p class="why-card-desc">Across Coimbatore and all of Tamil Nadu</p>
+                </div>
+                <div class="why-card">
+                    <div class="why-card-icon">⭐</div>
+                    <div class="why-card-number">5/5</div>
+                    <h4 class="why-card-title">Google Rating</h4>
+                    <p class="why-card-desc">Verified reviews from real clients</p>
+                </div>
+                <div class="why-card">
+                    <div class="why-card-icon">🏗️</div>
+                    <div class="why-card-number">50+</div>
+                    <h4 class="why-card-title">Project Categories</h4>
+                    <p class="why-card-desc">Office, Hospital, Bakery, Showroom & more</p>
+                </div>
+                <div class="why-card">
+                    <div class="why-card-icon">🔧</div>
+                    <div class="why-card-number">Pan-TN</div>
+                    <h4 class="why-card-title">Service Coverage</h4>
+                    <p class="why-card-desc">Coimbatore, Tirupur, Trichy, Madurai, Nagercoil</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Consultation Form Section -->
+    <section class="consultation-section" id="contact">
+        <div class="consultation-container">
+            <div class="consultation-left">
+                <h2 class="consultation-heading">Get Your FREE Interior Consultation</h2>
+                <p class="consultation-sub">No commitment. Just possibilities.</p>
+                <ul class="consultation-bullets">
+                    <li class="consultation-bullet">
+                        <span class="check-mark">✓</span>
+                        Site visit & measurement at no cost
+                    </li>
+                    <li class="consultation-bullet">
+                        <span class="check-mark">✓</span>
+                        Budget breakdown within 24 hours
+                    </li>
+                    <li class="consultation-bullet">
+                        <span class="check-mark">✓</span>
+                        3D design concept on request
+                    </li>
+                </ul>
+                <a href="tel:+919486045434" class="consultation-phone">+91 94860 45434</a>
+                <a href="https://wa.me/919486045434" target="_blank" rel="noopener" class="whatsapp-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                    Chat on WhatsApp
+                </a>
+                <p class="service-areas">Coimbatore | Tirupur | Trichy | Madurai | Nagercoil</p>
+            </div>
+            <div class="consultation-right">
+                <form id="consultationForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <input type="text" class="form-input" placeholder="Full Name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="tel" class="form-input" placeholder="Phone Number" name="phone" required>
+                        </div>
+                        <div class="form-group full-width">
+                            <input type="email" class="form-input" placeholder="Email Address" name="email">
+                        </div>
+                        <div class="form-group full-width">
+                            <input type="text" class="form-input" placeholder="Project Location" name="location" required>
+                        </div>
+                        <div class="form-group full-width">
+                            <select class="form-select" name="projectType" required>
+                                <option value="">Select Project Type</option>
+                                <option value="office">Corporate Office</option>
+                                <option value="showroom">Showroom & Retail</option>
+                                <option value="hospital">Hospital & Clinic</option>
+                                <option value="bakery">Bakery & Restaurant</option>
+                                <option value="residential">Residential</option>
+                                <option value="school">School & College</option>
+                                <option value="factory">Factory</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <p style="font-family: var(--font-body); font-size: 0.85rem; color: var(--muted); margin-bottom: 0.5rem;">Services Needed:</p>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="ceiling" name="services" value="ceiling">
+                                    <label for="ceiling">False Ceiling</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="partition" name="services" value="partition">
+                                    <label for="partition">Glass Partition</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="acp" name="services" value="acp">
+                                    <label for="acp">ACP Elevation</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="kitchen" name="services" value="kitchen">
+                                    <label for="kitchen">Modular Kitchen</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="full" name="services" value="full">
+                                    <label for="full">Full Interiors</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="other" name="services" value="other">
+                                    <label for="other">Other</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group full-width">
+                            <p style="font-family: var(--font-body); font-size: 0.85rem; color: var(--muted); margin-bottom: 0.5rem;">Approximate Budget:</p>
+                            <div class="range-container">
+                                <input type="range" class="range-slider" min="50000" max="5000000" step="50000" value="500000" name="budget">
+                                <span class="range-value">₹5L</span>
+                            </div>
+                        </div>
+                        <div class="form-group full-width">
+                            <textarea class="form-input" placeholder="Tell us about your project..." name="message" rows="4"></textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="form-submit">Book My Free Consultation →</button>
+                    <p class="form-privacy">🔒 Your details are 100% confidential. No spam.</p>
+                </form>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div>
+                <div class="footer-logo">
+                    <div class="logo-monogram">KV</div>
+                    <div class="logo-text">
+                        <span class="logo-brand">KOVAI VETRI</span>
+                        <span class="logo-sub">INTERIORS</span>
+                    </div>
+                </div>
+                <p class="footer-tagline">Transforming Spaces, Defining Excellence</p>
+                <div class="footer-socials">
+                    <a href="#" class="footer-social">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                    </a>
+                    <a href="#" class="footer-social">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                    </a>
+                    <a href="#" class="footer-social">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
+                    </a>
+                    <a href="https://wa.me/919486045434" target="_blank" rel="noopener" class="footer-social">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                    </a>
+                    <a href="#" class="footer-social">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    </a>
+                </div>
+            </div>
+            <div>
+                <h4 class="footer-title">Commercial Services</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Corporate Office</a></li>
+                    <li><a href="#">Showroom & Retail</a></li>
+                    <li><a href="#">Hospital & Clinic</a></li>
+                    <li><a href="#">Bakery & Restaurant</a></li>
+                    <li><a href="#">Bank Interior</a></li>
+                    <li><a href="#">School & College</a></li>
+                    <li><a href="#">Factory Interior</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="footer-title">Residential Services</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Modular Kitchen</a></li>
+                    <li><a href="#">Bedroom Interior</a></li>
+                    <li><a href="#">Cupboard Design</a></li>
+                    <li><a href="#">Apartment Interior</a></li>
+                    <li><a href="#">Pooja Room</a></li>
+                    <li><a href="#">False Ceiling</a></li>
+                    <li><a href="#">ACP Elevation</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="footer-title">Contact Info</h4>
+                <div class="footer-contact-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <span>Coimbatore, Tamil Nadu</span>
+                </div>
+                <div class="footer-contact-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                    <span>+91 94860 45434</span>
+                </div>
+                <div class="footer-contact-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" x2="22" y1="12" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                    <span>kovaivetriinteriors.in</span>
+                </div>
+                <p style="font-family: var(--font-body); font-size: 0.85rem; color: var(--muted); margin-top: 1rem;">Serving: Coimbatore | Tirupur | Trichy | Madurai | Nagercoil</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© <span id="currentYear"></span> Kovai Vetri Interiors. All rights reserved. | Est. 2006</p>
+        </div>
+    </footer>
+    
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/919486045434" target="_blank" rel="noopener" class="whatsapp-float">
+        <div class="whatsapp-pulse"></div>
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+        <span class="whatsapp-tooltip">Chat with us on WhatsApp</span>
+    </a>
+    
+    <!-- Success Overlay -->
+    <div class="success-overlay" id="successOverlay">
+        <div class="success-content">
+            <div class="success-check">✓</div>
+            <h3 class="success-title">Thank You!</h3>
+            <p class="success-text">Our team will call you within 2 hours!</p>
+        </div>
+    </div>
+    
+    <!-- Confetti Container -->
+    <div class="confetti-container" id="confettiContainer"></div>
+
+    <script>
+        // ===== IMAGE FALLBACK (global — called by onerror attr) =====
+        function kvImgFallback(img) {
+            img.onerror = null;
+            // Copper-gradient SVG placeholder, no single quotes inside the URI
+            var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600">'
+                + '<defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">'
+                + '<stop offset="0%" stop-color="#1A2E4A"/>'
+                + '<stop offset="50%" stop-color="#B87333" stop-opacity="0.3"/>'
+                + '<stop offset="100%" stop-color="#0A0A0F"/>'
+                + '</linearGradient></defs>'
+                + '<rect width="800" height="600" fill="url(#g)"/>'
+                + '<text x="50%" y="50%" font-family="serif" font-size="18" fill="#B87333"'
+                + ' text-anchor="middle" dominant-baseline="middle">Kovai Vetri Interiors</text>'
+                + '</svg>';
+            img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+        }
+
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set current year & dynamic founding-year counters
+            const currentYear = new Date().getFullYear();
+            document.getElementById('currentYear').textContent = currentYear;
+            const yearsInBiz = currentYear - 2006;
+            const whyYears = document.getElementById('whyYears');
+            const whyYearsNum = document.getElementById('whyYearsNum');
+            if (whyYears) whyYears.textContent = yearsInBiz;
+            if (whyYearsNum) whyYearsNum.textContent = yearsInBiz + '+';
+            
+            // Initialize Lucide icons immediately (before card init)
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+            
+            // Initialize all components
+            initCursor();
+            initPageCurtain();
+            initNavbar();
+            initMobileMenu();
+            initThreeJS();
+            initGSAPAnimations();
+            initStatsCounter();
+            initPortfolioFilter();
+            initServiceCards();
+            initBeforeAfterSliders();
+            initTestimonialCarousel();
+            initForm();
+            initMagneticButtons();
+        });
+        
+        // ===== CUSTOM CURSOR =====
+        function initCursor() {
+            const cursorDot = document.querySelector('.cursor-dot');
+            const cursorRing = document.querySelector('.cursor-ring');
+            
+            if (!cursorDot || !cursorRing) return;
+            
+            let mouseX = -200, mouseY = -200;
+            let ringX = -200, ringY = -200;
+            let hasMovedOnce = false;
+            
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                
+                if (!hasMovedOnce) {
+                    // Snap ring to mouse position immediately on first move — no lerp from corner
+                    ringX = mouseX;
+                    ringY = mouseY;
+                    hasMovedOnce = true;
+                    cursorDot.classList.add('visible');
+                    cursorRing.classList.add('visible');
+                }
+                
+                cursorDot.style.left = mouseX + 'px';
+                cursorDot.style.top = mouseY + 'px';
+            });
+            
+            function animateCursor() {
+                // Lerp factor 0.2 = responsive but still smooth
+                ringX += (mouseX - ringX) * 0.20;
+                ringY += (mouseY - ringY) * 0.20;
+                
+                cursorRing.style.left = ringX + 'px';
+                cursorRing.style.top = ringY + 'px';
+                
+                requestAnimationFrame(animateCursor);
+            }
+            animateCursor();
+            
+            // Hover effect on interactive elements
+            const interactiveElements = document.querySelectorAll('a, button, input, select, textarea');
+            interactiveElements.forEach(el => {
+                el.addEventListener('mouseenter', () => cursorRing.classList.add('hover'));
+                el.addEventListener('mouseleave', () => cursorRing.classList.remove('hover'));
+            });
+            
+            // Click effect
+            document.addEventListener('mousedown', () => cursorRing.classList.add('click'));
+            document.addEventListener('mouseup', () => cursorRing.classList.remove('click'));
+        }
+        
+        // ===== PAGE LOAD CURTAIN =====
+        function initPageCurtain() {
+            const curtain = document.querySelector('.curtain');
+            const curtainLogos = document.querySelectorAll('.curtain-logo');
+            
+            if (!curtain) return;
+            
+            // Fade in logos
+            gsap.to(curtainLogos, {
+                opacity: 1,
+                duration: 0.8,
+                delay: 0.2
+            });
+            
+            // Split curtain
+            setTimeout(() => {
+                gsap.to('.curtain-top', {
+                    y: '-100%',
+                    duration: 1.6,
+                    ease: 'power4.inOut'
+                });
+                gsap.to('.curtain-bottom', {
+                    y: '100%',
+                    duration: 1.6,
+                    ease: 'power4.inOut'
+                });
+                
+                // Remove curtain after animation
+                setTimeout(() => {
+                    curtain.style.display = 'none';
+                    initHeroEntrance();
+                }, 1600);
+            }, 800);
+        }
+        
+        // ===== HERO ENTRANCE ANIMATION =====
+        function initHeroEntrance() {
+            const tl = gsap.timeline();
+            
+            tl.from('.hero-badge', { opacity: 0, y: -20, duration: 0.6, delay: 0.3 })
+              .from('.hero-title-line1', { opacity: 0, x: -100, duration: 0.8 }, '-=0.3')
+              .from('.hero-title-line2', { opacity: 0, x: 100, duration: 0.8 }, '-=0.5')
+              .from('.hero-subtitle', { opacity: 0, y: 30, duration: 0.6 }, '-=0.3')
+              .from('.btn-primary, .btn-secondary', { opacity: 0, scale: 0.8, duration: 0.5, stagger: 0.1 }, '-=0.3')
+              .from('.trust-bar', { opacity: 0, duration: 0.5 }, '-=0.3')
+              .from('.hero-image', { opacity: 0, y: 60, duration: 0.6, stagger: 0.1 }, '-=0.3');
+        }
+        
+        // ===== NAVBAR SCROLL EFFECT =====
+        function initNavbar() {
+            const navbar = document.querySelector('.navbar');
+            
+            if (!navbar) return;
+            
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+        }
+        
+        // ===== MOBILE MENU =====
+        function initMobileMenu() {
+            const hamburger = document.querySelector('.hamburger');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const mobileLinks = document.querySelectorAll('.mobile-menu a');
+            
+            if (!hamburger || !mobileMenu) return;
+            
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('active');
+                mobileMenu.classList.toggle('active');
+                
+                // Stagger animate links
+                if (mobileMenu.classList.contains('active')) {
+                    mobileLinks.forEach((link, i) => {
+                        gsap.to(link, {
+                            opacity: 1,
+                            x: 0,
+                            duration: 0.4,
+                            delay: 0.3 + i * 0.1
+                        });
+                    });
+                }
+            });
+            
+            // Close on link click
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    hamburger.classList.remove('active');
+                    mobileMenu.classList.remove('active');
+                });
+            });
+            
+            // Close on ESC
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
+                    hamburger.classList.remove('active');
+                    mobileMenu.classList.remove('active');
+                }
+            });
+            
+            // Close on outside click or touch
+            ['click', 'touchstart'].forEach(evtType => {
+                document.addEventListener(evtType, (e) => {
+                    if (mobileMenu.classList.contains('active') && 
+                        !mobileMenu.contains(e.target) && 
+                        !hamburger.contains(e.target)) {
+                        hamburger.classList.remove('active');
+                        mobileMenu.classList.remove('active');
+                    }
+                }, { passive: true });
+            });
+        }
+        
+        // ===== THREE.JS HERO BACKGROUND =====
+        function initThreeJS() {
+            const canvas = document.querySelector('.hero-canvas');
+            if (!canvas) return;
+            
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+            
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            
+            camera.position.z = 30;
+            
+            // Create architectural wireframe
+            const wireframeGroup = new THREE.Group();
+            
+            // Grid floor
+            const gridHelper = new THREE.GridHelper(60, 30, 0xB87333, 0xB87333);
+            gridHelper.position.y = -10;
+            gridHelper.material.opacity = 0.3;
+            gridHelper.material.transparent = true;
+            wireframeGroup.add(gridHelper);
+            
+            // Structural columns
+            const columnGeometry = new THREE.CylinderGeometry(0.3, 0.3, 20, 8);
+            const columnMaterial = new THREE.LineBasicMaterial({ color: 0xB87333, transparent: true, opacity: 0.4 });
+            
+            const columnPositions = [
+                [-20, 0, -20], [20, 0, -20], [-20, 0, 20], [20, 0, 20],
+                [-10, 0, -20], [10, 0, -20], [-10, 0, 20], [10, 0, 20]
+            ];
+            
+            columnPositions.forEach(pos => {
+                const column = new THREE.Mesh(columnGeometry, columnMaterial);
+                column.position.set(pos[0], 0, pos[2]);
+                wireframeGroup.add(column);
+            });
+            
+            // Glass partition walls (wireframe boxes)
+            const partitionGeometry = new THREE.BoxGeometry(15, 12, 0.1);
+            const partitionEdges = new THREE.EdgesGeometry(partitionGeometry);
+            const partitionMaterial = new THREE.LineBasicMaterial({ color: 0xB87333, transparent: true, opacity: 0.3 });
+            
+            const partition1 = new THREE.LineSegments(partitionEdges, partitionMaterial);
+            partition1.position.set(-5, 2, -10);
+            wireframeGroup.add(partition1);
+            
+            const partition2 = new THREE.LineSegments(partitionEdges, partitionMaterial);
+            partition2.position.set(10, 2, 5);
+            wireframeGroup.add(partition2);
+            
+            scene.add(wireframeGroup);
+            
+            // Floating particles
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particleCount = 400;
+            const positions = new Float32Array(particleCount * 3);
+            const sizes = new Float32Array(particleCount);
+            
+            for (let i = 0; i < particleCount; i++) {
+                positions[i * 3] = (Math.random() - 0.5) * 80;
+                positions[i * 3 + 1] = (Math.random() - 0.5) * 60;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 80;
+                sizes[i] = Math.random() * 2 + 0.5;
+            }
+            
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            particlesGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+            
+            const particlesMaterial = new THREE.PointsMaterial({
+                color: 0xB87333,
+                size: 0.3,
+                transparent: true,
+                opacity: 0.6
+            });
+            
+            const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particles);
+            
+            // Floating 3D architectural elements
+            const elements = [];
+            
+            // Desk cluster
+            const deskGeometry = new THREE.BoxGeometry(4, 2, 2);
+            const deskEdges = new THREE.EdgesGeometry(deskGeometry);
+            const deskMaterial = new THREE.LineBasicMaterial({ color: 0xB87333, transparent: true, opacity: 0.4 });
+            const desk = new THREE.LineSegments(deskEdges, deskMaterial);
+            desk.position.set(-15, 5, 10);
+            desk.userData = { speed: 0.8, offset: 0 };
+            elements.push(desk);
+            scene.add(desk);
+            
+            // Partition wall
+            const wallGeometry = new THREE.BoxGeometry(8, 6, 0.5);
+            const wallEdges = new THREE.EdgesGeometry(wallGeometry);
+            const wall = new THREE.LineSegments(wallEdges, deskMaterial);
+            wall.position.set(15, 8, -15);
+            wall.userData = { speed: 1.2, offset: 2 };
+            elements.push(wall);
+            scene.add(wall);
+            
+            // False ceiling panel
+            const ceilingGeometry = new THREE.BoxGeometry(10, 0.3, 10);
+            const ceilingEdges = new THREE.EdgesGeometry(ceilingGeometry);
+            const ceiling = new THREE.LineSegments(ceilingEdges, deskMaterial);
+            ceiling.position.set(0, 15, 0);
+            ceiling.userData = { speed: 0.6, offset: 4 };
+            elements.push(ceiling);
+            scene.add(ceiling);
+            
+            // Animation
+            let time = 0;
+            function animate() {
+                requestAnimationFrame(animate);
+                time += 0.01;
+                
+                // Rotate wireframe group slowly
+                wireframeGroup.rotation.y += 0.0008;
+                
+                // Animate particles
+                particles.rotation.y += 0.0003;
+                
+                // Bob floating elements
+                elements.forEach(el => {
+                    el.position.y += Math.sin(time * el.userData.speed + el.userData.offset) * 0.003;
+                });
+                
+                renderer.render(scene, camera);
+            }
+            animate();
+            
+            // Handle resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+        
+        // ===== GSAP SCROLLTRIGGER ANIMATIONS =====
+        function initGSAPAnimations() {
+            if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+            
+            gsap.registerPlugin(ScrollTrigger);
+
+            // ── Section headers: title + subtitle staggered ──
+            document.querySelectorAll('.section-label').forEach(el => {
+                gsap.from(el, {
+                    immediateRender: false, scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' },
+                    opacity: 0, y: 20, duration: 0.6, ease: 'power2.out',
+                    clearProps: 'all'
+                });
+            });
+
+            document.querySelectorAll('.section-title').forEach(el => {
+                gsap.from(el, {
+                    immediateRender: false, scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' },
+                    opacity: 0, y: 40, duration: 0.9, ease: 'power2.out',
+                    clearProps: 'all'
+                });
+            });
+
+            document.querySelectorAll('.section-subtitle').forEach(el => {
+                gsap.from(el, {
+                    immediateRender: false, scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' },
+                    opacity: 0, y: 30, duration: 0.8, delay: 0.15, ease: 'power2.out',
+                    clearProps: 'all'
+                });
+            });
+
+            // ── Stats strip: scale up from 0 ──
+            document.querySelectorAll('.stat-item').forEach((el, i) => {
+                gsap.from(el, {
+                    immediateRender: false, scrollTrigger: { trigger: '.stats-section', start: 'top 80%', toggleActions: 'play none none none' },
+                    opacity: 0, scale: 0.8, y: 30, duration: 0.7, delay: i * 0.12, ease: 'back.out(1.5)',
+                    clearProps: 'all'
+                });
+            });
+
+            // ── Portfolio cards: staggered grid reveal ──
+            document.querySelectorAll('.portfolio-card').forEach((el, i) => {
+                gsap.from(el, {
+                    immediateRender: false, scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' },
+                    opacity: 0, y: 50, scale: 0.95, duration: 0.75, delay: (i % 4) * 0.08, ease: 'power2.out',
+                    clearProps: 'all'
+                });
+            });
+
+            // ── Portfolio image parallax ──
+            document.querySelectorAll('.portfolio-image').forEach(img => {
+                gsap.to(img, {
+                    scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: true },
+                    y: -30, ease: 'none',
+                    clearProps: 'all'
+                });
+            });
+
+            // ── Before/After section header ──
+            gsap.from('.before-after-section .section-title', {
+                immediateRender: false, scrollTrigger: { trigger: '.before-after-section', start: 'top 80%', toggleActions: 'play none none none' },
+                opacity: 0, x: -40, duration: 0.9, ease: 'power2.out',
+                    clearProps: 'all'
+            });
+
+            // ── Before/After sliders: slide in from sides ──
+            document.querySelectorAll('.ba-pair').forEach((el, i) => {
+                gsap.from(el, {
+                    immediateRender: false, scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' },
+                    opacity: 0, x: i % 2 === 0 ? -50 : 50, duration: 0.85, ease: 'power2.out',
+                    clearProps: 'all'
+                });
+            });
+
+            // ── Process steps: sequential reveal ──
+            document.querySelectorAll('.process-step').forEach((el, i) => {
+                gsap.from(el, {
+                    immediateRender: false, scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' },
+                    opacity: 0, y: 40, duration: 0.7, delay: i * 0.12, ease: 'power2.out',
+                    clearProps: 'all'
+                });
+            });
+
+            // ── Timeline progress bar scrub ──
+            gsap.to('.timeline-progress', {
+                scrollTrigger: { trigger: '.process-timeline', start: 'top 60%', end: 'bottom 60%', scrub: 1 },
+                width: '100%'
+            });
+
+            // ── Why Kovai Vetri: left panel slides in ──
+            gsap.from('.why-left', {
+                immediateRender: false, scrollTrigger: { trigger: '.why-section', start: 'top 75%', toggleActions: 'play none none none' },
+                opacity: 0, x: -60, duration: 1, ease: 'power2.out',
+                    clearProps: 'all'
+            });
+
+            // ── Why cards: staggered ──
+            document.querySelectorAll('.why-card').forEach((el, i) => {
+                gsap.from(el, {
+                    immediateRender: false, scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' },
+                    opacity: 0, y: 40, scale: 0.95, duration: 0.75, delay: i * 0.1, ease: 'power2.out',
+                    clearProps: 'all'
+                });
+            });
+
+            // ── Consultation form: slide up ──
+            gsap.from('.consultation-left', {
+                immediateRender: false, scrollTrigger: { trigger: '.consultation-section', start: 'top 75%', toggleActions: 'play none none none' },
+                opacity: 0, y: 50, duration: 0.9, ease: 'power2.out',
+                    clearProps: 'all'
+            });
+            gsap.from('.consultation-right', {
+                immediateRender: false, scrollTrigger: { trigger: '.consultation-section', start: 'top 75%', toggleActions: 'play none none none' },
+                opacity: 0, y: 50, duration: 0.9, delay: 0.2, ease: 'power2.out',
+                    clearProps: 'all'
+            });
+
+            // ── Form fields: staggered fade in ──
+            document.querySelectorAll('.form-group').forEach((el, i) => {
+                gsap.from(el, {
+                    immediateRender: false, scrollTrigger: { trigger: '.consultation-section', start: 'top 70%', toggleActions: 'play none none none' },
+                    opacity: 0, y: 20, duration: 0.6, delay: 0.3 + i * 0.07, ease: 'power2.out',
+                    clearProps: 'all'
+                });
+            });
+
+            // ── Footer columns: staggered ──
+            document.querySelectorAll('.footer-grid > div').forEach((el, i) => {
+                gsap.from(el, {
+                    immediateRender: false, scrollTrigger: { trigger: 'footer', start: 'top 90%', toggleActions: 'play none none none' },
+                    opacity: 0, y: 30, duration: 0.7, delay: i * 0.1, ease: 'power2.out',
+                    clearProps: 'all'
+                });
+            });
+
+            // ── Footer bottom line ──
+            gsap.from('.footer-bottom', {
+                immediateRender: false, scrollTrigger: { trigger: '.footer-bottom', start: 'top 98%', toggleActions: 'play none none none' },
+                opacity: 0, y: 20, duration: 0.7, ease: 'power2.out',
+                    clearProps: 'all'
+            });
+        }
+        
+        // ===== STATS COUNTER ANIMATION =====
+        function initStatsCounter() {
+            // Resolve data-count-year → compute years from founding year to now
+            document.querySelectorAll('.stat-number[data-count-year]').forEach(el => {
+                const foundingYear = parseInt(el.dataset.countYear);
+                const years = new Date().getFullYear() - foundingYear;
+                el.dataset.count = years;
+            });
+
+            const statNumbers = document.querySelectorAll('.stat-number[data-count]');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const target = parseInt(entry.target.dataset.count);
+                        animateCounter(entry.target, 0, target, 2500);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+            
+            statNumbers.forEach(num => observer.observe(num));
+        }
+        
+        function animateCounter(element, start, end, duration) {
+            const startTime = performance.now();
+            
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easeProgress = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+                const current = Math.floor(start + (end - start) * easeProgress);
+                
+                element.textContent = current + '+';
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                } else {
+                    // Add shimmer effect after count completes
+                    element.style.animation = 'copperShimmer 3s ease-in-out infinite';
+                }
+            }
+            
+            requestAnimationFrame(update);
+        }
+        
+        // ===== PORTFOLIO FILTER =====
+        function initPortfolioFilter() {
+            const filterTabs = document.querySelectorAll('.filter-tab');
+            const portfolioCards = document.querySelectorAll('.portfolio-card');
+            
+            filterTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Update active tab
+                    filterTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    const filter = tab.dataset.filter;
+                    
+                    // Filter cards with animation using autoAlpha (handles opacity + visibility cleanly)
+                    portfolioCards.forEach(card => {
+                        if (filter === 'all' || card.dataset.category === filter) {
+                            card.style.display = '';
+                            gsap.to(card, {
+                                autoAlpha: 1,
+                                scale: 1,
+                                duration: 0.4,
+                                pointerEvents: 'auto'
+                            });
+                        } else {
+                            gsap.to(card, {
+                                autoAlpha: 0,
+                                scale: 0.9,
+                                duration: 0.3,
+                                pointerEvents: 'none',
+                                onComplete: () => { card.style.display = 'none'; }
+                            });
+                        }
+                    });
+                });
+            });
+        }
+        
+        // ===== SERVICE CARDS 3D TILT =====
+        function initServiceCards() {
+            const serviceCards = document.querySelectorAll('.service-card');
+            
+            // Inject all icons first, then call createIcons once (more reliable)
+            serviceCards.forEach(card => {
+                const iconContainer = card.querySelector('.service-icon');
+                const iconName = card.dataset.lucide;
+                if (iconContainer && iconName) {
+                    iconContainer.innerHTML = `<i data-lucide="${iconName}"></i>`;
+                }
+            });
+            // Single createIcons call after all are injected
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+
+            // 3D tilt on mouse move
+            serviceCards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    
+                    const rotateX = (y - centerY) / centerY * -12;
+                    const rotateY = (x - centerX) / centerX * 12;
+                    
+                    card.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(15px)`;
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'perspective(1200px) rotateX(0) rotateY(0) translateZ(0)';
+                });
+            });
+        }
+        
+        // ===== BEFORE/AFTER SLIDERS =====
+        function initBeforeAfterSliders() {
+            const sliders = document.querySelectorAll('.ba-slider');
+            
+            sliders.forEach(slider => {
+                const range = slider.querySelector('.ba-range');
+                const afterImage = slider.querySelector('.ba-after');
+                const divider = slider.querySelector('.ba-divider');
+                const handle = slider.querySelector('.ba-handle');
+                
+                if (!range || !afterImage) return;
+                
+                range.addEventListener('input', (e) => {
+                    const value = e.target.value;
+                    afterImage.style.clipPath = `inset(0 ${100 - value}% 0 0)`;
+                    divider.style.left = value + '%';
+                    handle.style.left = value + '%';
+                });
+            });
+        }
+        
+        // ===== TESTIMONIAL CAROUSEL =====
+        function initTestimonialCarousel() {
+            const cards = document.querySelectorAll('.testimonial-card');
+            const prevBtn = document.getElementById('prevTestimonial');
+            const nextBtn = document.getElementById('nextTestimonial');
+            
+            if (cards.length === 0) return;
+            
+            let currentIndex = 0;
+            const totalCards = cards.length;
+            
+            function updateCarousel() {
+                cards.forEach((card, index) => {
+                    // Remove all state classes
+                    card.classList.remove('center', 'side', 'side-left', 'side-right', 'far-left', 'far-right', 'hidden-card');
+                    
+                    const diff = ((index - currentIndex) % totalCards + totalCards) % totalCards;
+                    // diff 0 = center, 1 = right, totalCards-1 = left, others = hidden
+                    
+                    if (diff === 0) {
+                        card.classList.add('center');
+                        card.style.zIndex = 10;
+                    } else if (diff === 1) {
+                        card.classList.add('side-right');
+                        card.style.zIndex = 5;
+                    } else if (diff === totalCards - 1) {
+                        card.classList.add('side-left');
+                        card.style.zIndex = 5;
+                    } else {
+                        card.classList.add('hidden-card');
+                        card.style.zIndex = 1;
+                    }
+                });
+            }
+            
+            function nextSlide() {
+                currentIndex = (currentIndex + 1) % totalCards;
+                updateCarousel();
+            }
+            
+            function prevSlide() {
+                currentIndex = (currentIndex - 1 + totalCards) % totalCards;
+                updateCarousel();
+            }
+            
+            if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+            if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+            
+            // Auto-rotate every 4.5s
+            let autoRotate = setInterval(nextSlide, 4500);
+            
+            // Pause on hover
+            const carousel = document.querySelector('.testimonial-carousel');
+            if (carousel) {
+                carousel.addEventListener('mouseenter', () => clearInterval(autoRotate));
+                carousel.addEventListener('mouseleave', () => { autoRotate = setInterval(nextSlide, 4500); });
+            }
+            
+            updateCarousel();
+        }
+        
+        // ===== CONSULTATION FORM =====
+        function initForm() {
+            const form = document.getElementById('consultationForm');
+            const successOverlay = document.getElementById('successOverlay');
+            const rangeSlider = document.querySelector('.range-slider');
+            const rangeValue = document.querySelector('.range-value');
+            
+            if (!form) return;
+            
+            // Budget range display
+            if (rangeSlider && rangeValue) {
+                rangeSlider.addEventListener('input', (e) => {
+                    const value = parseInt(e.target.value);
+                    if (value >= 1000000) {
+                        rangeValue.textContent = '₹' + (value / 1000000).toFixed(1) + 'L+';
+                    } else {
+                        rangeValue.textContent = '₹' + (value / 1000) + 'K';
+                    }
+                });
+            }
+            
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                // Collect form data
+                const data = new FormData(form);
+                const name     = data.get('name') || '';
+                const phone    = data.get('phone') || '';
+                const email    = data.get('email') || '';
+                const location = data.get('location') || '';
+                const type     = data.get('projectType') || '';
+                const budget   = rangeValue ? rangeValue.textContent : '';
+                const message  = data.get('message') || '';
+                const services = data.getAll('services').join(', ') || 'Not specified';
+
+                // Build WhatsApp message so the client gets the lead instantly
+                const waText = encodeURIComponent(
+                    `🏠 *New Consultation Request — Kovai Vetri Website*\n\n` +
+                    `👤 Name: ${name}\n` +
+                    `📞 Phone: ${phone}\n` +
+                    `📧 Email: ${email || 'Not provided'}\n` +
+                    `📍 Location: ${location}\n` +
+                    `🏗️ Project Type: ${type}\n` +
+                    `🔧 Services: ${services}\n` +
+                    `💰 Budget: ${budget}\n` +
+                    `💬 Message: ${message || 'No message'}`
+                );
+
+                // Open WhatsApp with the lead details (opens in new tab so user stays on page)
+                window.open(`https://wa.me/919486045434?text=${waText}`, '_blank');
+
+                // Show success overlay & confetti
+                successOverlay.classList.add('active');
+                createConfetti();
+                
+                // Reset form
+                form.reset();
+                if (rangeValue) rangeValue.textContent = '₹5L';
+                
+                // Hide overlay after 4 seconds
+                setTimeout(() => {
+                    successOverlay.classList.remove('active');
+                }, 4000);
+            });
+        }
+        
+        // ===== CONFETTI EFFECT =====
+        function createConfetti() {
+            const container = document.getElementById('confettiContainer');
+            if (!container) return;
+            
+            const colors = ['#B87333', '#E8C99A', '#1A2E4A', '#D4956A'];
+            
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                container.appendChild(confetti);
+                
+                // Remove after animation
+                setTimeout(() => confetti.remove(), 4000);
+            }
+        }
+        
+        // ===== MAGNETIC BUTTONS =====
+        function initMagneticButtons() {
+            const buttons = document.querySelectorAll('.btn-primary, .btn-secondary, .nav-cta, .form-submit');
+            
+            buttons.forEach(btn => {
+                btn.addEventListener('mousemove', (e) => {
+                    const rect = btn.getBoundingClientRect();
+                    const x = e.clientX - rect.left - rect.width / 2;
+                    const y = e.clientY - rect.top - rect.height / 2;
+                    
+                    btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+                });
+                
+                btn.addEventListener('mouseleave', () => {
+                    btn.style.transform = 'translate(0, 0)';
+                });
+            });
+        }
+    </script>
+</body>
+</html>
